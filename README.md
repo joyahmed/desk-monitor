@@ -17,7 +17,7 @@ Built with Tauri 2, Svelte 5 and Rust. Nothing runs on its own: every fix is a b
 
 ## Download
 
-Get the Windows installer (`Desk Monitor_x.y.z_x64-setup.exe`) from the
+Get the Windows installer (`desk-monitor_x.y.z_x64-setup.exe`) from the
 [Releases](../../releases) page, or build it yourself (see [Build](#build)).
 
 ## Features
