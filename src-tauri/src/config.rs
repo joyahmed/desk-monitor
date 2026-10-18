@@ -64,6 +64,10 @@ pub struct Config {
     /// Full hotkey list (None in files written before hotkeys were stored here).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub hotkeys: Option<Vec<Hotkey>>,
+    /// The owner's name for this desk, shown in the Monitors tab (e.g. "Ada's Desk").
+    /// None or blank = the app says "Your desk".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub desk_name: Option<String>,
 }
 
 /// Lowercase letters/digits/dashes, from a display name (same rule as the UI form's id slug).
@@ -107,6 +111,7 @@ fn defaults_for(computer: Option<&str>) -> Config {
             ..Default::default()
         }],
         hotkeys: None,
+        desk_name: None,
     }
 }
 
@@ -216,6 +221,11 @@ pub async fn save_config(mut config: Config) -> Result<(), String> {
     if config.hotkeys.is_none() {
         config.hotkeys = load().ok().and_then(|c| c.hotkeys);
     }
+    // Same for the desk name. The UI clears it by sending a blank string, which is stored as unset.
+    config.desk_name = match config.desk_name.take() {
+        None => load().ok().and_then(|c| c.desk_name),
+        Some(n) => Some(n.trim().to_string()).filter(|n| !n.is_empty()),
+    };
     save(&config)
 }
 
@@ -230,6 +240,20 @@ mod tests {
         assert!(c.hotkeys.is_none());
         assert_eq!(server_name(&c).as_deref(), Some("office-pc"));
         assert!(!serde_json::to_string(&c).unwrap().contains("hotkeys"));
+    }
+
+    #[test]
+    fn desk_name_is_optional_and_skipped_when_unset() {
+        let t = r#"{"machines":[],"desk_name":"Ada's Desk"}"#;
+        let c: Config = serde_json::from_str(t).unwrap();
+        assert_eq!(opt(&c.desk_name), Some("Ada's Desk"));
+        let blank: Config = serde_json::from_str(r#"{"machines":[],"desk_name":"  "}"#).unwrap();
+        assert_eq!(opt(&blank.desk_name), None, "blank = unset");
+        assert!(
+            !serde_json::to_string(&defaults())
+                .unwrap()
+                .contains("desk_name")
+        );
     }
 
     #[test]

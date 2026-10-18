@@ -127,6 +127,9 @@ Example with invented names and documentation addresses:
 | `login_command` | Optional. Command run over ssh that logs a user in on the machine's own screen. Shows a **Log in** button. |
 | `client_restart_command` | Optional. Command run over ssh that restarts the Deskflow client there. Shows **Restart client**; **Fix server IP** also runs it after the change. |
 
+Top level, next to `machines`: `desk_name` (optional) is your name for the desk, e.g. `"Ada's Desk"`;
+the Monitors tab shows it instead of "Your desk". You can also set it with **Rename** in the app.
+
 A button whose field is unset is hidden, not broken. Hotkeys are stored in the same file under
 `hotkeys` once you save them in the app.
 

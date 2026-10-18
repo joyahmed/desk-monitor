@@ -66,7 +66,7 @@
         {/key}
       {/if}
       {#if app.tab === 'monitors'}
-        <MonitorsTab config={app.config} tick={app.tick} onedit={app.onedit} />
+        <MonitorsTab config={app.config} tick={app.tick} onedit={app.onedit} onsaved={app.onsaved} />
       {:else}
         <RdpTab config={app.config} tick={app.tick} onedit={app.onedit} />
       {/if}

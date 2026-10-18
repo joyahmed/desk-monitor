@@ -24,6 +24,8 @@ export interface Config {
   machines: Machine[];
   /** Saved hotkeys; leave out to keep the stored ones (save_config never wipes them). */
   hotkeys?: Hotkey[] | null;
+  /** The owner's name for this desk ("Ada's Desk"). Leave out to keep the stored one; "" clears it. */
+  desk_name?: string | null;
 }
 
 export type ClientState = 'connected' | 'hung' | 'disconnected' | 'asleep' | 'offline' | 'unknown';

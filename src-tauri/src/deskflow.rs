@@ -1420,6 +1420,7 @@ mod tests {
                 m("d", "rdp", "pc-a"),
             ],
             hotkeys: None,
+            desk_name: None,
         }
     }
 

@@ -1,13 +1,14 @@
 <script lang="ts">
   import type { Config, Machine, Role } from '$lib/api';
   import { useDeskMap } from '$lib/hooks/use-desk-map.svelte';
+  import { useDeskName } from '$lib/hooks/use-desk-name.svelte';
   import Button from '$lib/ui/Button.svelte';
   import Chip from '$lib/ui/Chip.svelte';
   import Cluster from '$lib/ui/Cluster.svelte';
-  import SectionLabel from '$lib/ui/SectionLabel.svelte';
   import DeskMap from './DeskMap.svelte';
   import DetailStrip from './DetailStrip.svelte';
   import HotkeyChips from './HotkeyChips.svelte';
+  import DeskNameBar from './desk-map-parts/DeskNameBar.svelte';
   import Headline from './desk-map-parts/Headline.svelte';
   import LayoutBar from './desk-map-parts/LayoutBar.svelte';
 
@@ -15,14 +16,16 @@
     config: Config;
     tick: number;
     onedit: (m: Machine | null, role: Role) => void;
+    onsaved: (c: Config) => void;
   }
-  let { config, tick, onedit }: Props = $props();
+  let { config, tick, onedit, onsaved }: Props = $props();
 
   const map = useDeskMap(
     () => config,
     () => tick,
     (m, role) => onedit(m, role)
   );
+  const desk = useDeskName(() => config, (c) => onsaved(c));
 </script>
 
 <div class="tab">
@@ -30,7 +33,7 @@
   <section class="room" aria-label="Desk map">
     <header class="head">
       <Cluster gap={4}>
-        <SectionLabel text="Your desk tonight" />
+        <DeskNameBar {desk} />
         {#each map.summary as c (c.key)}<Chip label={c.label} state={c.state} title={c.title} />{/each}
       </Cluster>
       <Cluster gap={5}>
@@ -54,8 +57,8 @@
   {:else if map.detail}
     {#key map.detail.key}<DetailStrip detail={map.detail} />{/key}
   {:else}
-    <section class="idle" aria-label="Your desk">
-      <Headline text="Your desk" />
+    <section class="idle" aria-label={desk.name}>
+      <Headline text={desk.name} />
       <p class="note">{map.idleNote}</p>
     </section>
   {/if}
