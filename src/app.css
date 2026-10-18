@@ -1,0 +1,113 @@
+/* Global base styles ("The Lit Screen"). Imported by +page.svelte. Colours, spacing and sizes
+   only via tokens (src/lib/tokens.css); scripts/check-blocks.mjs enforces it. Raw <button>,
+   <input>, <select> get the md control size here; prefer ui/Button, ui/Input, ui/Select. */
+@import './lib/fonts.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  color-scheme: dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 var(--fs-body) / 1.5 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: var(--raised);
+  color: var(--ink);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-0) var(--size-md-px);
+  min-height: var(--size-md);
+  font-size: var(--size-md-fs);
+  font-weight: 500;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* fields are a line, not a box (same look as ui/Input) */
+input,
+select,
+textarea {
+  background: transparent;
+  border: 0;
+  border-bottom: var(--border-w) solid var(--bezel);
+  border-radius: 0;
+  padding: var(--space-0) var(--space-1);
+  min-height: var(--size-md);
+  max-width: 100%;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder);
+}
+option {
+  background: var(--surface);
+  color: var(--ink);
+}
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+/* h2 = section kicker (ui/SectionLabel) */
+h2 {
+  font-family: var(--font-body);
+  font-size: var(--fs-kicker);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-kicker);
+}
+h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+code,
+kbd,
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-variant-numeric: tabular-nums;
+}
+a {
+  color: inherit;
+  text-decoration-color: var(--link-line);
+  text-underline-offset: var(--link-offset);
+}
+a:hover {
+  text-decoration-color: var(--sky);
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

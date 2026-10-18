@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Desk Monitor app icon, "The Lit Screen": one lit screen of three, its light pooling on the desk. -->
+  <defs>
+    <linearGradient id="lit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE9FF"/><stop offset=".5" stop-color="#7CD3FF"/><stop offset="1" stop-color="#3A6FE0"/></linearGradient>
+    <linearGradient id="pool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7CD3FF" stop-opacity=".6"/><stop offset="1" stop-color="#7CD3FF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="#00040F"/>
+  <g transform="translate(512 520) scale(6.6) translate(-64 -72)">
+    <rect x="8" y="40" width="26" height="20" rx="2" fill="none" stroke="#3A4F85" stroke-width="3"/>
+    <rect x="94" y="40" width="26" height="20" rx="2" fill="none" stroke="#3A4F85" stroke-width="3"/>
+    <rect x="42" y="30" width="44" height="32" rx="2" fill="url(#lit)"/>
+    <path d="M6 74h116" stroke="#2A3A63" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M42 77h44l16 37H26z" fill="url(#pool)"/>
+  </g>
+</svg>

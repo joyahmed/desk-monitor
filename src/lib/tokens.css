@@ -1,0 +1,229 @@
+/* "The Lit Screen" tokens (DESIGN.md). Dark is the default; data-theme="light" is the day room.
+   This is the ONLY file allowed to hold colour literals and raw sizes. */
+:root {
+  /* ---------- colour: dark (default) ---------- */
+  --ground: #00040f; /* bluish black room, 75% */
+  --surface: #060b1c; /* bands that need a floor (raised Block, panels), 10% */
+  --panel: #060b1c; /* old name = --surface */
+  --raised: #0b1430; /* third level: hover rows, raw buttons */
+  --panel-2: #0b1430; /* old name = --raised */
+  --ink: #eaf2ff; /* 18.2:1 on ground */
+  --ink-dim: #8a99b8; /* muted text, 7.16:1 */
+  --placeholder: #7f8dad; /* 6.17:1 */
+  --line: #141d36; /* hairlines, band rules */
+  --sky: #7cd3ff; /* the light: link hover, ring, focus (12.3:1) */
+  --sky-2: #bfe9ff; /* top of the light gradient */
+  --deep: #3a6fe0; /* bottom of the light gradient - headline/lit fill only, never small text (4.42:1) */
+  --accent: #7cd3ff; /* old name: the one accent = sky */
+  --accent-ink: #00040f; /* text on an --accent fill */
+  --glow: #7cd3ff; /* glow and shadow only, never text */
+  --focus: #7cd3ff;
+  --ok: #62e3a6; /* connected / online, 12.75:1 */
+  --warn: #ffc266; /* at login screen / disconnected, 12.85:1 */
+  --bad: #ff6b7f; /* hung / error / danger links, 7.48:1 */
+  --info: #b9c2d9; /* asleep (the white sleep LED), 11.5:1 */
+  --off: #3a4562; /* dots and outlines only, never text */
+
+  /* the light (lit screen, headline, pool) */
+  --grad-light: linear-gradient(160deg, #bfe9ff 0%, #7cd3ff 45%, #5088ec 100%); /* lit screen; --on-lit text sits on it */
+  --grad-headline: linear-gradient(180deg, #bfe9ff 0%, #7cd3ff 50%, #3a6fe0 100%); /* headline fill (background-clip: text) */
+  --on-lit: #00040f; /* text on --grad-light */
+  --pool: radial-gradient(
+    ellipse 50% 100% at 50% 0%,
+    rgba(124, 211, 255, 0.26) 0%,
+    rgba(58, 111, 224, 0.1) 45%,
+    transparent 75%
+  ); /* light falling on the desk below the lit screen */
+  --screen-off: #050a19; /* a dark screen face */
+  --screen-dim: #0c1631; /* connected but not selected: dimly lit */
+  --bezel: #1c2848; /* 1px screen bezel */
+  --link-line: #2a3d6b; /* resting underline under text links */
+  --lit-glow: 0 0 32px rgba(124, 211, 255, 0.35), 0 0 80px rgba(58, 111, 224, 0.25); /* halo round the lit screen */
+
+  /* ---------- block system (DESIGN.md "Block system") ----------
+     Every spacing / size / radius literal lives HERE. scripts/check-blocks.mjs fails any
+     other file that writes raw px/rem in padding, margin, gap, height, min-height,
+     font-size or border-radius. */
+
+  /* spacing scale: 4px steps */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-hair: 2px; /* half step: chip padding-block, hairline gaps only */
+
+  /* page gutter: 14px base, 22px >=640, 28px >=880 (media queries at the end of this file) */
+  --gutter: 14px;
+
+  /* control sizes (Button, Chip, Input, Select): height / padding-inline / font / gap */
+  --size-sm: 24px;
+  --size-md: 32px;
+  --size-lg: 40px;
+  --size-sm-px: var(--space-2);
+  --size-md-px: var(--space-3);
+  --size-lg-px: var(--space-4);
+  --size-sm-fs: var(--fs-xs);
+  --size-md-fs: var(--fs-small);
+  --size-lg-fs: var(--fs-body);
+  --size-sm-gap: var(--space-1);
+  --size-md-gap: var(--space-2);
+  --size-lg-gap: var(--space-2);
+  --dot-sm: 6px;
+  --dot-md: 8px;
+  --dot-lg: 10px;
+  /* bigger hit targets (rail) */
+  --size-touch: 44px;
+  --size-xl: 48px;
+  /* the ONE round action (Log in / Wake) */
+  --ring-size: 84px;
+  --ring-w: 1.5px;
+  --ring-halo: 6px; /* faint static second ring */
+  /* sleep LED on an asleep screen */
+  --led-size: 4px;
+  /* text links: gap between text and underline */
+  --link-offset: 6px;
+  /* result line: left bar */
+  --bar-w: 2px;
+
+  /* radius: no cards. Screens are a 2px bezel; controls are lines, not boxes. */
+  --radius-screen: 2px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  --radius: var(--radius-md); /* old name, kept */
+
+  /* border */
+  --border-w: 1px;
+  --border: var(--border-w) solid var(--line);
+
+  /* elevation: the room is lit by light, not shadows */
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --shadow-panel: var(--shadow-2); /* old name, kept */
+
+  /* z-index scale */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-sticky: 5;
+  --z-rail: 10;
+  --z-overlay: 20;
+  --z-toast: 30;
+
+  /* breakpoints - documentation only: CSS cannot read var() inside @media, so media
+     queries write the literal. Mobile-first tiers: base 0+, sm >=420, md >=640, lg >=880.
+     Grid stacks to one column below 640 (or at <=420 with stack="xs"). */
+  --bp-sm: 420px;
+  --bp-md: 640px;
+  --bp-lg: 880px;
+
+  /* shell */
+  --rail-w: 64px;
+  --rail-bar-h: 56px;
+
+  /* fonts: self-hosted in static/fonts (src/lib/fonts.css). No mono: IPs and times are
+     Onest with tabular-nums (set on body). */
+  --font-display: 'Big Shoulders Display', 'Bahnschrift', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'Onest', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Onest', 'Segoe UI', system-ui, sans-serif;
+
+  /* type scale */
+  --fs-headline: 64px; /* machine name, display 900, line-height --lh-headline */
+  --fs-headline-sm: 48px; /* machine name below 640 */
+  --lh-headline: 0.85;
+  --fs-screen: 20px; /* label inside a map screen */
+  --fs-h1: 22px;
+  --fs-h2: 15px;
+  --fs-hotkey: 15px; /* "WIN 1" in the hotkeys footer, display 800 */
+  --fs-body: 15px;
+  --fs-small: 13px;
+  --fs-mono: 13px; /* IPs, times (Onest tabular) */
+  --fs-xs: 12px; /* sm controls, meta */
+  --fs-kicker: 11px; /* section kicker: caps, --ls-kicker */
+  --fs-tiny: 10px; /* rail labels under icons */
+  --ls-kicker: 0.16em;
+
+  /* ---------- motion presets (DESIGN.md "Motion") ----------
+     Use the whole preset: `transition: opacity var(--motion-light)`,
+     `animation: breathe var(--motion-breathe) infinite`. */
+  --ease-light: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-lift: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-light: 900ms;
+  --motion-light: var(--dur-light) var(--ease-light); /* the light moves to another screen; pool slides */
+  --motion-breathe: 4s ease-in-out; /* asleep Mac's white LED (loop) */
+  --motion-pulse: 2.5s ease-out; /* ring pulse on the one action that needs you (loop) */
+  --motion-hover: 160ms ease; /* link underline, ring halo */
+  --motion-enter: 240ms var(--ease-lift); /* a result line or panel appears */
+  /* old names, kept */
+  --t-lift: 180ms;
+  --t-strip: 240ms;
+  --t-state: 400ms;
+  --t-snap: 160ms;
+  --t-breathe: 4000ms;
+
+  /* state glow: 1px ring plus 24px halo at 25% */
+  --glow-ok: 0 0 0 1px var(--ok), 0 0 24px color-mix(in srgb, var(--ok) 25%, transparent);
+  --glow-warn: 0 0 0 1px var(--warn), 0 0 24px color-mix(in srgb, var(--warn) 25%, transparent);
+  --glow-bad: 0 0 0 1px var(--bad), 0 0 24px color-mix(in srgb, var(--bad) 25%, transparent);
+  --glow-info: 0 0 0 1px var(--info), 0 0 24px color-mix(in srgb, var(--info) 25%, transparent);
+  --glow-off: 0 0 0 1px var(--off), 0 0 24px color-mix(in srgb, var(--off) 25%, transparent);
+  --glow-bad-peak: 0 0 0 1px var(--bad), 0 0 40px color-mix(in srgb, var(--bad) 45%, transparent);
+}
+
+:root[data-theme='light'] {
+  --ground: #f3f7fd;
+  --surface: #e6eefa;
+  --panel: #e6eefa;
+  --raised: #ffffff;
+  --panel-2: #ffffff;
+  --ink: #0a1630; /* 16.7:1 */
+  --ink-dim: #4d5b78; /* 6.34:1 */
+  --placeholder: #5e6c8a; /* 4.51:1, borderline: never below --fs-small */
+  --line: #d3ddee;
+  --sky: #1f56d0; /* links / ring / focus, 5.92:1 */
+  --sky-2: #2a5bd7;
+  --deep: #0b2e86;
+  --accent: #1f56d0;
+  --accent-ink: #ffffff;
+  --glow: #2a5bd7;
+  --focus: #1f56d0;
+  --ok: #0b7a4b; /* 5.01:1 */
+  --warn: #8f5300; /* 5.74:1 */
+  --bad: #c4213f; /* 5.37:1 */
+  --info: #4a5675; /* 6.78:1 */
+  --off: #a3afc7;
+
+  --grad-light: linear-gradient(160deg, #3a6fe0 0%, #2a5bd7 45%, #0b2e86 100%);
+  --grad-headline: linear-gradient(180deg, #2a5bd7 0%, #1f49b8 50%, #0b2e86 100%);
+  --on-lit: #ffffff;
+  --pool: radial-gradient(
+    ellipse 50% 100% at 50% 0%,
+    rgba(42, 91, 215, 0.18) 0%,
+    rgba(42, 91, 215, 0.06) 45%,
+    transparent 75%
+  );
+  --screen-off: #dfe7f4;
+  --screen-dim: #cfdcf1;
+  --bezel: #b4c2dc;
+  --link-line: #a9bce3;
+  --lit-glow: 0 0 28px rgba(42, 91, 215, 0.3), 0 0 64px rgba(11, 46, 134, 0.15);
+
+  --shadow-1: 0 1px 0 rgba(15, 23, 42, 0.06);
+  --shadow-2: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 22px;
+  }
+}
+@media (min-width: 880px) {
+  :root {
+    --gutter: 28px;
+  }
+}
