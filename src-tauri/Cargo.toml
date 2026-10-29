@@ -1,6 +1,6 @@
 [package]
 name = "desk-monitor"
-version = "0.1.0"
+version = "0.1.1"
 description = "Tray app that watches and fixes a Deskflow desk: one keyboard and mouse across Windows, Linux and macOS"
 authors = ["Joy Ahmed"]
 license = "MIT"

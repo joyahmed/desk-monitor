@@ -22,7 +22,9 @@ fn show_main(app: &tauri::AppHandle) {
 pub fn run() {
     tauri::Builder::default()
         // Must be first: a second launch (Start menu, desktop icon) shows this window and exits.
-        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| show_main(app)))
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            show_main(app)
+        }))
         .plugin(tauri_plugin_opener::init())
         // Never enables itself: only `autostart_set` from the UI toggle changes it.
         .plugin(tauri_plugin_autostart::Builder::new().build())
