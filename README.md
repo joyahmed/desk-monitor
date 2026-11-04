@@ -1,68 +1,125 @@
+<div align="center">
+
+<img src="assets/icon/icon-1024.png" alt="desk-monitor icon" width="112">
+
 # desk-monitor
 
-A Windows tray app that watches and fixes a [Deskflow](https://github.com/deskflow/deskflow)
-setup: one keyboard and mouse shared across Windows, Linux and macOS machines.
+**A tray app that keeps a Deskflow desk working.**<br>
+When the mouse won't cross to a screen, it tells you why and gives you the button that fixes it.
 
-When the mouse stops crossing to a screen, desk-monitor tells you why (client offline, hung,
-asleep, at its login screen) and gives you the button that fixes it. It also keeps a list of
-Remote Desktop PCs with their sessions.
+[![Latest release](https://img.shields.io/github/v/release/joyahmed/desk-monitor?style=flat-square&label=release&color=38bdf8)](https://github.com/joyahmed/desk-monitor/releases/latest) [![Platforms](https://img.shields.io/badge/runs%20on-Windows-1e293b?style=flat-square)](#install) [![Clients](https://img.shields.io/badge/clients-Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-1e293b?style=flat-square)](#what-you-need) [![License: MIT](https://img.shields.io/badge/license-MIT-1e293b?style=flat-square)](LICENSE)
 
-Built with Tauri 2, Svelte 5 and Rust. Nothing runs on its own: every fix is a button you click.
+### [⬇ Download desk-monitor](https://github.com/joyahmed/desk-monitor/releases/latest)
 
-![The desk map: only the selected screen is lit; a Linux server waits at its login screen](docs/screenshots/monitors-dark.png)
+Free · No tracking · Rust + Tauri 2 + Svelte 5
 
-| Log in to a Linux login screen | Remote Desktop PCs | Light theme |
+<br>
+
+<img src="docs/screenshots/monitors-dark.png" alt="The desk map: only the selected screen is lit, and a Linux server waits at its login screen with a Log in button" width="900">
+
+</div>
+
+<br>
+
+## Why I built this
+
+My desk has a Windows PC, an Ubuntu server and a Mac, each with its own monitor. Remote Desktop to the server kept freezing its picture, so I moved to [Deskflow](https://github.com/deskflow/deskflow): one keyboard and mouse for all three, and every machine draws its own screen.
+
+It works well, until the mouse stops crossing to a screen. Then the question is always "why?" Is the machine off? Asleep? Sitting at its login screen? Is Deskflow stuck on a big clipboard copy? Finding out meant opening a terminal and checking by hand, every time.
+
+So I built **desk-monitor**. It checks each machine, tells me in plain words what is wrong, and gives me the one button that fixes it. Every fix is a button I click. The one thing it does by itself: when it starts, it starts the Deskflow server if it isn't running.
+
+## A quick look
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/login-dark.png" alt="Logging in to a Linux machine that sits at its login screen"><br>
+      <b>Log in from your own desk.</b> A Linux machine at its login screen gets a <b>Log in</b> button. Type the password here, it is never stored.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/remote-dark.png" alt="The Remote Desktop tab with three PCs, two online and one offline"><br>
+      <b>Your Remote Desktop PCs.</b> Who is online, connect in one click, see and log off sessions, fix a stuck paste.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/monitors-light.png" alt="The desk map in the light theme"><br>
+      <b>Light or dark.</b> Both themes, one click apart.
+    </td>
+    <td width="50%" valign="top">
+      <b>One key per screen.</b> Bind <kbd>Win</kbd> + numpad <kbd>1</kbd>…<kbd>9</kbd> to a screen. On the Windows PC a key can pick one of its monitors, and the cursor jumps to the middle of it.
+    </td>
+  </tr>
+</table>
+
+## Highlights
+
+- 🩺 **Says why**: each machine shows `connected`, `hung`, `disconnected`, `asleep` or `offline`, with the reason.
+- 🧊 **Catches the clipboard hang**: spots Deskflow stuck on a big clipboard copy, a known Deskflow bug.
+- 🔁 **Restart the server**: restarts Deskflow through its own Windows service. No Deskflow window needed.
+- 🔑 **Log in, restart, wake**: optional buttons per machine for a Linux login screen, a stuck client, or a sleeping Mac.
+- 🧭 **Fix server IP**: when your PC's address changes, one click points the client back at it.
+- 🗺 **Layout editor**: drag your screens into order and save. Deskflow's settings are backed up first.
+- 🖥 **Remote Desktop tab**: a list of RDP PCs with online checks, sessions and a paste fix.
+- 🫥 **Quiet**: lives in the tray, can start with Windows, and only ever opens one copy.
+
+<details>
+<summary><b>Everything it does</b> (click to open)</summary>
+
+### Monitors tab (Deskflow)
+
+- Status for each Deskflow client: `connected`, `hung`, `disconnected`, `asleep`, `offline` or `unknown`, with the reason. It reads the Deskflow server log, checks port 22, and runs short ssh checks.
+- **Hung**: the client's Deskflow connection (port 24800) has more than 100 kB waiting to be read. That is Deskflow's known clipboard hang. Checked with `ss` on Linux and `netstat` on macOS.
+- **Asleep** (macOS, best guess): disconnected, and nothing is keeping the Mac awake.
+- **At the login screen** (Linux): nobody is logged in on the machine's own screen.
+- **Restart Deskflow server** through the Deskflow Windows service.
+- **Fix server IP**: writes this PC's current LAN address into the client's Deskflow settings (with a backup first). For networks without fixed addresses.
+- **Restart client**, **Log in** and **Wake**: each one shows up only when you set it up for that machine (see [Set it up](#set-it-up)).
+- **Layout editor**: put the screens in a left-to-right row. Saving rewrites the links in Deskflow's `server.conf` (backup first) and keeps your own options as they were.
+- **Hotkeys**: bind <kbd>Win</kbd> + numpad <kbd>1</kbd>…<kbd>9</kbd> to a screen. Keys on the server PC can also pick one of its monitors; the cursor moves to its centre.
+- **Desk name**: call your desk what you like with **Rename**.
+
+### Remote Desktop tab
+
+- Online check per PC (name lookup and port 3389).
+- **Connect** opens Remote Desktop (`mstsc`).
+- **Sessions** lists who is logged in (`qwinsta`), and you can log a session off.
+- **Fix paste** restarts the clipboard helper (`rdpclip`) on the remote PC.
+- Passwords are never stored. Windows Credential Manager keeps working as usual.
+
+### App
+
+- Lives in the tray. Closing the window hides it.
+- When it starts, it starts the Deskflow server through its service if the server isn't running.
+- Can start with Windows.
+- Opening it a second time brings up the copy that is already running.
+
+</details>
+
+## Install
+
+Download from the [Releases page](https://github.com/joyahmed/desk-monitor/releases/latest).
+
+| System | File | First launch |
 |---|---|---|
-| ![](docs/screenshots/login-dark.png) | ![](docs/screenshots/remote-dark.png) | ![](docs/screenshots/monitors-light.png) |
+| **Windows 10 / 11** | `desk-monitor_<version>_x64-setup.exe` | Install it on the PC that runs the Deskflow **server**. It isn't signed yet, so Windows may warn you: click **More info**, then **Run anyway**. |
 
-## Download
+The Linux and Mac machines don't need desk-monitor. They only need Deskflow and ssh (see below).
 
-Get the Windows installer (`desk-monitor_x.y.z_x64-setup.exe`) from the
-[Releases](../../releases) page, or build it yourself (see [Build](#build)).
-
-## Features
-
-**Monitors tab (Deskflow)**
-
-- Status per Deskflow client: `connected`, `hung`, `disconnected`, `asleep`, `offline`,
-  `unknown`, with the reason. Read from the server log
-  (`C:\ProgramData\Deskflow\deskflow-core.log`), a TCP check on port 22, and short ssh checks:
-  - hung: the client's Deskflow socket (port 24800) has a receive queue over 100 kB, the known
-    clipboard-chunk hang (`ss` on Linux, `netstat` on macOS);
-  - asleep (macOS, best effort): disconnected and no `caffeinate` power assertions;
-  - at the login screen (Linux): no user session on seat0 (`loginctl`).
-- **Restart Deskflow server** through the Deskflow Windows service. No Deskflow window needed.
-- **Fix server IP**: rewrites `remoteHost=` in the client's Deskflow settings to this PC's current
-  private LAN address (backup first), for networks without fixed addresses.
-- Optional per machine (see below): **Restart client**, **Log in**, **Wake**.
-- Layout editor: put the screens in a left-to-right row; saving rewrites the `links` of
-  Deskflow's `server.conf` (backup first) and keeps your `options` block as it was.
-- Win+numpad hotkeys: bind keys 1-9 to a screen. Keys bound to the server can also pick one of
-  its monitors; the app then moves the cursor to that monitor's centre.
-
-**Remote Desktop tab**
-
-- Online check per PC (name lookup + TCP 3389), Connect (`mstsc`), list sessions (`qwinsta`),
-  log a session off, and fix a stuck clipboard (restarts `rdpclip` on the remote PC).
-- Passwords are never stored; Windows Credential Manager keeps working as usual.
-
-**App**
-
-- Lives in the tray; closing the window hides it. Optional start with Windows.
-
-## Requirements
+## What you need
 
 - Windows 10 or 11 on the PC that runs the Deskflow **server**.
-- [Deskflow](https://github.com/deskflow/deskflow) 1.26 installed with its Windows service
-  (the default installer sets it up). desk-monitor talks to that service, see the note below.
-- For each Linux or macOS client: an ssh alias in `~/.ssh/config` that logs in **with a key and
-  no prompt** (desk-monitor runs `ssh -o BatchMode=yes`, so a password prompt simply fails).
+- [Deskflow](https://github.com/deskflow/deskflow) 1.26, installed with its Windows service (the normal installer sets it up).
+- For each Linux or Mac client: an ssh alias in `~/.ssh/config` that logs in **with a key and no password prompt**. desk-monitor runs `ssh -o BatchMode=yes`, so a password prompt just fails.
 - Linux clients: the Deskflow Flatpak (`org.deskflow.deskflow`), `ss` and `loginctl`.
-  macOS clients: the Deskflow app; `netstat` and `pmset` are built in.
-- To build: [Bun](https://bun.sh), [Rust](https://rustup.rs) and the
-  [Tauri 2 prerequisites](https://v2.tauri.app/start/prerequisites/) for Windows.
+- Mac clients: the Deskflow app. `netstat` and `pmset` are built in.
 
-## Configuration: machines.json
+## Watch it
+
+See it working, and more of what I build: [youtube.com/@joysbuilds](https://www.youtube.com/@joysbuilds).
+
+## Set it up
 
 The machine list lives in `%APPDATA%\desk-monitor\machines.json`. On first start the app writes
 one entry: this PC as the Deskflow server, named after the computer (Deskflow's default screen
@@ -169,19 +226,7 @@ These are Deskflow's own settings files:
 - Linux (Flatpak): `~/.var/app/org.deskflow.deskflow/config/Deskflow/Deskflow.conf`
 - macOS: `~/Library/Deskflow/Deskflow.conf`
 
-## Build
-
-```sh
-bun install
-bun run tauri build      # installer in src-tauri/target/release/bundle/
-bun run tauri dev        # development
-bun run gate             # all checks: blocks, svelte-check, build, cargo fmt/clippy/test
-```
-
-Live tests that touch a real client are ignored by default. Run them with
-`DESK_MONITOR_LIVE_CLIENT=<machine id> cargo test -- --ignored` from `src-tauri`.
-
-## A note on the Deskflow service
+### A note on the Deskflow service
 
 desk-monitor restarts the server through the Deskflow Windows service (`deskflow-daemon`), the
 same way the Deskflow window does: it sends one-line messages over the named pipe
@@ -193,8 +238,40 @@ That protocol is internal to Deskflow and **has no version check**. It was read 
 **Restart Deskflow server** still works; the server status shows a warning when the installed
 Deskflow is not 1.26.x.
 
-## Licence
+## Build from source
 
-MIT, see [LICENSE](LICENSE). The bundled fonts (Big Shoulders Display, Onest) are under the SIL
-Open Font License 1.1, see [static/fonts/LICENSE-OFL.txt](static/fonts/LICENSE-OFL.txt).
+You need [Bun](https://bun.sh), [Rust](https://rustup.rs) and the [Tauri 2 prerequisites](https://v2.tauri.app/start/prerequisites/) for Windows.
+
+```
+bun install
+bun run tauri dev        # run it while you work on it
+bun run tauri build      # installer in src-tauri/target/release/bundle/
+bun run gate             # every check: blocks, svelte-check, build, cargo fmt, clippy and tests
+```
+
+Tests that touch a real client are skipped by default. Run them with
+`DESK_MONITOR_LIVE_CLIENT=<machine id> cargo test -- --ignored` from `src-tauri`.
+
+It's Rust and Tauri 2 on the back, Svelte 5 on the front.
+
+## Privacy
+
+- No telemetry, no analytics, no account.
+- It only talks to the machines you list, over ssh, TCP checks and Remote Desktop.
+- Passwords are never stored or logged. The **Log in** password goes to your own login command and nowhere else.
+
+## License
+
+MIT. See [LICENSE](LICENSE). The bundled fonts (Big Shoulders Display, Onest) are under the SIL Open Font License 1.1, see [static/fonts/LICENSE-OFL.txt](static/fonts/LICENSE-OFL.txt).
 Not affiliated with the Deskflow project.
+
+---
+
+<div align="center">
+
+I build tools I use myself, from Bangladesh. If desk-monitor saves you a trip to a terminal, that makes me happy.<br>
+Found a bug or want something? [Open an issue](https://github.com/joyahmed/desk-monitor/issues).
+
+**Joy**
+
+</div>
